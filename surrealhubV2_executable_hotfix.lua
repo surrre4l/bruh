@@ -6,7 +6,7 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 local WindUI = loadstring(game:HttpGet(
-    "https://github.com/Footagesus/WindUI/releases/download/1.6.66/main.lua"
+    "https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"
 ))()
 
 local Players           = game:GetService("Players")
@@ -276,7 +276,7 @@ local TeamsTab      = Window:Tab({ Title = "Teams",      Icon = "solar:users-gro
 local CharacterTab  = Window:Tab({ Title = "Character",  Icon = "solar:user-bold" })
 local ClientTab     = Window:Tab({ Title = "Client",     Icon = "solar:cpu-bolt-bold" })
 
-Window:Divider()
+addWindowDivider()
 
 local PracticeTab   = Window:Tab({ Title = "Practice",   Icon = "solar:sports-bold" })
 
@@ -332,8 +332,12 @@ MainTab:Toggle({
             local voter  = resolveName(season, v.Value)
             local target = resolveName(season, v.Name)
             pcall(function()
-                game:GetService("TextChatService").TextChannels.RBXGeneral
-                    :SendAsync(voter .. " voted for " .. target)
+                local tcs = game:GetService("TextChatService")
+                local channels = tcs:FindFirstChild("TextChannels")
+                local general = channels and channels:FindFirstChild("RBXGeneral")
+                if general then
+                    general:SendAsync(voter .. " voted for " .. target)
+                end
             end)
         end))
     end),
@@ -2140,7 +2144,7 @@ MorphsTab:Button({
             local url = "https://raw.githubusercontent.com/surrre4l/bruh/main/surrealcrash.lua"
             local ok, err = pcall(function()
                 local src = game:HttpGet(url, true)
-                if not src or #src < 50 then error("Empty response") end
+                if type(src) ~= "string" or #src < 50 then error("Empty response") end
                 local fn = loadstring(src)
                 if not fn then error("loadstring failed") end
                 fn()
@@ -2169,6 +2173,7 @@ local function applyTypefaceToObject(obj, jsonName, attrKey, scale)
     for _, blocked in ipairs(TYPEFACE_BLACKLIST) do
         if obj.Name == blocked or obj:FindFirstAncestor(blocked) then return end
     end
+    if type(getcustomasset) ~= "function" then return end
     obj.FontFace = Font.new(getcustomasset(jsonName))
     if not obj:GetAttribute(attrKey) then
         if obj.TextSize > 0 then
@@ -2179,6 +2184,9 @@ local function applyTypefaceToObject(obj, jsonName, attrKey, scale)
 end
 
 local function loadTypeface(displayName, ttfFile, jsonFile, source, attrKey)
+    if type(getcustomasset) ~= "function" then
+        return notify("Typeface", "Your executor does not provide getcustomasset()", 4)
+    end
     local ok, err = pcall(function()
         if not isfile(ttfFile) then writefile(ttfFile, game:HttpGet(source)) end
         writefile(jsonFile, HttpService:JSONEncode({
@@ -3184,7 +3192,7 @@ TrollTab:Button({
                     "https://raw.githubusercontent.com/surrre4l/bruh/main/exe.lua.txt",
                     true
                 )
-                if not src or #src < 50 then error("Empty response") end
+                if type(src) ~= "string" or #src < 50 then error("Empty response") end
                 local fn = loadstring(src)
                 if not fn then error("loadstring returned nil") end
                 fn()
