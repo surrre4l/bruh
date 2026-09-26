@@ -57,55 +57,58 @@ end
 local function wrapTab(tab)
     local W = {}
     function W:Section(o)
-        if type(o) == "string" then return tab:CreateSection(o) end
-        return tab:CreateSection((o or {}).Title or (o or {}).Name or "Section")
+        if type(o) == "string" then return tab:Section(o) end
+        return tab:Section((o or {}).Title or (o or {}).Name or "Section")
     end
     function W:Button(o, flag)
         o = normalizeOpts(o); o.Flag = o.Flag or flag
-        return tab:CreateButton(o)
+        return tab:Button(o)
     end
     function W:Toggle(o, flag)
         o = normalizeOpts(o); o.CurrentValue = o.CurrentValue ~= nil and o.CurrentValue or (o.Value or false); o.Flag = o.Flag or flag
         o.Value = nil
-        return tab:CreateToggle(o)
+        return tab:Toggle(o)
     end
     function W:Slider(o, flag)
         o = normalizeOpts(o); o.Flag = o.Flag or flag
         local v = o.Value
         if type(v) == "table" then
-            o.Range = { v.Min or 0, v.Max or 100 }
+            o.Min = v.Min or 0
+            o.Max = v.Max or 100
+            o.Step = v.Step or o.Step or 1
             o.CurrentValue = v.Default or o.CurrentValue or v.Min or 0
         else
-            o.Range = o.Range or { o.Min or 0, o.Max or 100 }
-            o.CurrentValue = o.CurrentValue or v or o.Min or 0
+            o.Min = o.Min or 0
+            o.Max = o.Max or 100
+            o.CurrentValue = o.CurrentValue or v or o.Min
         end
-        o.Increment = o.Increment or o.Step or 1
-        o.Value, o.Min, o.Max, o.Default, o.Step = nil, nil, nil, nil, nil
-        return tab:CreateSlider(o)
+        o.Step = o.Step or o.Increment or 1
+        o.Value, o.Range, o.Increment, o.Default = nil, nil, nil, nil
+        return tab:Slider(o)
     end
     function W:Dropdown(o, flag)
         o = normalizeOpts(o); o.Flag = o.Flag or flag
         o.Options = o.Options or o.Values or {}
-        o.CurrentOption = o.CurrentOption or o.Value or o.Options[1]
-        o.MultipleOptions = o.MultipleOptions or o.Multi or false
-        o.Values, o.Value, o.Multi, o.AllowNone = nil, nil, nil, nil
-        return tab:CreateDropdown(o)
+        o.Default = o.Default or o.CurrentOption or o.Value or o.Options[1]
+        o.Multi = o.Multi ~= nil and o.Multi or (o.MultipleOptions or false)
+        o.Values, o.Value, o.CurrentOption, o.MultipleOptions, o.AllowNone = nil, nil, nil, nil, nil
+        return tab:Dropdown(o)
     end
     function W:Input(o, flag)
         o = normalizeOpts(o); o.Flag = o.Flag or flag
         o.PlaceholderText = o.PlaceholderText or o.Placeholder or ""
         o.CurrentValue = o.CurrentValue or ""
         o.Placeholder = nil
-        return tab:CreateInput(o)
+        return tab:Input(o)
     end
     function W:Colorpicker(o, flag)
         o = normalizeOpts(o); o.Flag = o.Flag or flag
         o.Color = o.Color or Color3.fromRGB(235, 199, 246)
-        return tab:CreateColorPicker(o)
+        return tab:ColorPicker(o)
     end
     function W:Paragraph(o)
         o = o or {}
-        return tab:CreateParagraph({ Title = o.Title or "", Content = o.Content or "" })
+        return tab:Paragraph({ Title = o.Title or "", Content = o.Content or "" })
     end
     function W:Group()
         local G = {}
