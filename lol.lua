@@ -1,6 +1,5 @@
--- Soluna Rayfield Mobile UI — repaired build
--- Fixes applied: flag guards, getMap cache, DescendantAdded early-out,
---                troll list filtering, lobby teleport pcall, LoadConfiguration order.
+-- Soluna Rayfield Mobile UI — repaired
+-- Concatenate parts 1→8 in order.
 
 local players           = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -15,12 +14,6 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 local typeOf = typeof
 local localPlayer = players.LocalPlayer
 
--- FIX #5: config restored before any auto-enable block runs.
-pcall(function() Rayfield:LoadConfiguration() end)
-
--- ============================================================
--- Options compatibility layer
--- ============================================================
 local options = {}
 
 local function normalizeDropdownValue(value, multi)
@@ -175,9 +168,6 @@ local function hasFunction(name)
   return false
 end
 
--- ============================================================
--- State
--- ============================================================
 local state = {
   fly = { active = false, gyro = nil, velocity = nil, speed = 1 },
 }
@@ -190,7 +180,6 @@ local characterCache = { character = nil, parts = {} }
 local roleData = {}
 local Utils = {}
 
--- FIX #perf: cached map reference. Invalidated on workspace child change.
 local _cachedMap = nil
 local function getMap()
   if _cachedMap and _cachedMap.Parent then return _cachedMap end
@@ -210,9 +199,6 @@ workspace.ChildAdded:Connect(function(c)
   end
 end)
 
--- ============================================================
--- Coin container / character cache
--- ============================================================
 local function skipCoin(p1)
   if not p1 then return end
   for i = #coinState.list, 1, -1 do
@@ -268,9 +254,6 @@ local function watchCoinContainer(p3)
   end)
 end
 
--- ============================================================
--- Utils (part 1: notify + string helpers)
--- ============================================================
 function Utils:Notify(title, content, duration, _)
   if options.enableNotifications and options.enableNotifications.Value == false then return end
   Rayfield:Notify({
@@ -353,9 +336,6 @@ function Utils.GetPlayer(p15, p16)
   return v18[1]
 end
 
--- ============================================================
--- Utils (part 2: targeting, fling, gun pickup)
--- ============================================================
 function Utils.getClosestModelToPlayer(p17, p18)
   local huge = math.huge
   local v20 = not p17 or not p17.Character
@@ -466,7 +446,6 @@ function Utils.miniFling(p19)
     local v23 = tick()
     local total = 0
     local v25
-
     repeat
       if rootPart and humanoid and p23 and p23.Parent then
         total = total + 100
@@ -633,9 +612,6 @@ function Utils.pickupGun()
   return false
 end
 
--- ============================================================
--- Safe zone
--- ============================================================
 local solunaSafeZone
 
 local function createSafeZone()
@@ -666,9 +642,6 @@ local function createSafeZone()
   Utils.Notify("Safe Zone platform created 5000 studs above you.", "Success")
 end
 
--- ============================================================
--- ESP Indicator
--- ============================================================
 local ESPIndicator = {}
 ESPIndicator.__index = ESPIndicator
 
@@ -684,7 +657,6 @@ local function getGuiParent()
   return coreGui
 end
 
--- FIX #latent: Parent resolved at construct time, not module-load time.
 ESPIndicator.Defaults = {
   AccentColor = Color3.new(1, 1, 0),
   HighlightFillTransparency = 0.7,
@@ -922,12 +894,8 @@ function ESPIndicator:Add(p37, p38)
   end
 
   self.Indicators[p37] = {
-    Highlight = highlight,
-    Arrow = clone,
-    Scaler = scaler,
-    DistanceLabel = distanceLabel,
-    Label = billboardGui,
-    Options = v42,
+    Highlight = highlight, Arrow = clone, Scaler = scaler,
+    DistanceLabel = distanceLabel, Label = billboardGui, Options = v42,
   }
 
   if v42.GroupName then self:AddToGroup(p37, v42.GroupName) end
@@ -960,11 +928,9 @@ function ESPIndicator:AddToGroup(p40, p41)
   local v45 = self.TargetIndex[p40]
   if not v45 then v45 = {}; self.TargetIndex[p40] = v45 end
   if not table.find(v45, p41) then table.insert(v45, p41) end
-
   for key13, value24 in pairs(addGroup2.properties) do
     self:SetGroupProperty(p41, key13, value24)
   end
-
   if not addGroup2.enabled then
     local v46 = self.Indicators[p40]
     if v46 then
@@ -998,7 +964,6 @@ function ESPIndicator:_update()
   if not self.ScreenGui or not self.ScreenGui.Parent then return end
   local currentCamera = workspace.CurrentCamera
   if not currentCamera then return end
-
   local viewportSize = currentCamera.ViewportSize
   local y2 = viewportSize.Y
   local x2 = viewportSize.X
@@ -1092,9 +1057,6 @@ function ESPIndicator:Destroy()
   self.TargetIndex = {}
 end
 
--- ============================================================
--- Window & tabs
--- ============================================================
 local solunaWindow = wrapRayfieldWindow(Rayfield:CreateWindow({
   Name = "Soluna — Murder Mystery 2",
   LoadingTitle = "Soluna",
@@ -1113,6 +1075,10 @@ local solunaWindow = wrapRayfieldWindow(Rayfield:CreateWindow({
   KeySystem = false,
 }))
 
+pcall(function() Rayfield:ToggleUI() end)
+pcall(function() Rayfield:SetVisibility(true) end)
+pcall(function() Rayfield:Open() end)
+
 local Tabs = {
   Player     = solunaWindow:AddTab({ Title = "Player",     Icon = "user" }),
   Combat     = solunaWindow:AddTab({ Title = "Combat",     Icon = "swords" }),
@@ -1124,9 +1090,6 @@ local Tabs = {
   Settings   = solunaWindow:AddTab({ Title = "Settings",   Icon = "settings" }),
 }
 
--- ============================================================
--- Role lookup / prediction
--- ============================================================
 local function getRolePlayer(p47)
   for key18, value31 in pairs(roleData) do
     if value31.Role == p47 or (p47 == "Sheriff" and value31.Role == "Hero") then
@@ -1134,7 +1097,6 @@ local function getRolePlayer(p47)
       if findFirstChild2 then return findFirstChild2 end
     end
   end
-
   for _, value32 in ipairs(players:GetPlayers()) do
     if value32.Backpack:FindFirstChild(
         p47 == "Murderer" and "Knife"
@@ -1168,20 +1130,15 @@ local function getPredictedPosition(p48, p49)
     + Vector3.new(0, hrp.Size.Y * 0.25, 0)
 end
 
--- ============================================================
--- Fly
--- ============================================================
 function SetFlyState(p50)
   state.fly.active = p50
   Utils.Notify("Fly", p50 and "Flight Systems Engaged." or "Flight Systems Disengaged.")
   local character5 = localPlayer.Character
   if not character5 then return end
-
   pcall(function()
     local humanoid4 = character5:FindFirstChildOfClass("Humanoid")
     local hrp = character5:FindFirstChild("HumanoidRootPart")
     if not humanoid4 or not hrp then return end
-
     if p50 then
       humanoid4.PlatformStand = true
       if not state.fly.gyro then
@@ -1211,7 +1168,6 @@ runService:BindToRenderStep("SolunaFly", Enum.RenderPriority.Character.Value, fu
   if userInputService:IsKeyDown(Enum.KeyCode.D) then v62.D = 1 end
   if userInputService:IsKeyDown(Enum.KeyCode.E) then v62.E = 1 end
   if userInputService:IsKeyDown(Enum.KeyCode.Q) then v62.Q = -1 end
-
   local currentCamera2 = workspace.CurrentCamera
   local vector = Vector3.new(v62.A + v62.D, v62.Q + v62.E, v62.S + v62.W)
   state.fly.velocity.Velocity = (currentCamera2.CFrame.RightVector * vector.X
@@ -1220,9 +1176,6 @@ runService:BindToRenderStep("SolunaFly", Enum.RenderPriority.Character.Value, fu
   state.fly.gyro.CFrame = currentCamera2.CFrame
 end)
 
--- ============================================================
--- Player tab
--- ============================================================
 local player = Tabs.Player
 local character6 = player:AddSection("Character")
 
@@ -1244,7 +1197,7 @@ character6:AddSlider("universal_fov_val", {
 
 character6:AddToggle("universal_loopWsFov_toggle", {
   Title = "Loop Walkspeed & FOV", Default = false,
-  Callback = function(value35) end,  -- handled by render loop below
+  Callback = function(value35) end,
 })
 
 local connect
@@ -1280,7 +1233,6 @@ end
 localPlayer.CharacterAdded:Connect(function(character7)
   if options.universal_fly_toggle and options.universal_fly_toggle.Value then
     task.wait(1)
-    -- FIX #7: re-check flag after wait in case user toggled off.
     if options.universal_fly_toggle and options.universal_fly_toggle.Value then
       SetFlyState(true)
     end
@@ -1356,19 +1308,14 @@ userInputService.InputBegan:Connect(function(input, p51)
   end
 end)
 
--- ============================================================
--- Combat tab
--- ============================================================
 local combat = Tabs.Combat
 local sheriffHeroActions = combat:AddSection("Sheriff/Hero Actions")
 local murdererActions = combat:AddSection("Murderer Actions")
 
 local function shootTarget()
   if getRolePlayer("Sheriff") ~= localPlayer and getRolePlayer("Hero") ~= localPlayer then
-    Utils.Notify("You are not the Sheriff/Hero.", "Error", nil)
-    return
+    Utils.Notify("You are not the Sheriff/Hero.", "Error", nil); return
   end
-
   if not localPlayer.Character or not localPlayer.Character:FindFirstChild("Gun") then
     if localPlayer.Backpack:FindFirstChild("Gun") then
       localPlayer.Character:FindFirstChildOfClass("Humanoid"):EquipTool(localPlayer.Backpack.Gun)
@@ -1436,16 +1383,10 @@ local function shootTarget()
     Utils.Notify("Shoot remote not found in Gun.", "Error", nil); return
   end
 
-  -- FIX #4: GetPivot inside pcall.
   local cframe3 = CFrame.new(v66)
-  local ok, err = pcall(function()
-    shoot:FireServer(gun:GetPivot(), cframe3)
-  end)
-  if ok then
-    Utils.Notify("Shot at " .. murderer.Name)
-  else
-    Utils.Notify("Failed to shoot: " .. tostring(err), "Error", nil)
-  end
+  local ok, err = pcall(function() shoot:FireServer(gun:GetPivot(), cframe3) end)
+  if ok then Utils.Notify("Shot at " .. murderer.Name)
+  else Utils.Notify("Failed to shoot: " .. tostring(err), "Error", nil) end
 end
 
 local aimingPrediction = combat:AddSection("Aiming & Prediction")
@@ -1505,7 +1446,6 @@ murdererActions:AddButton({
     targetHrp.Anchored = true
     targetHrp.CFrame = myHrp.CFrame * CFrame.new(0, 0, -2)
     task.wait(0.05)
-
     local knife = localPlayer.Character:FindFirstChild("Knife")
       or localPlayer.Backpack:FindFirstChild("Knife")
     if knife and knife:FindFirstChild("Events")
@@ -1532,28 +1472,23 @@ murdererActions:AddToggle("killAura_toggle", {
           or getRolePlayer("Murderer") ~= localPlayer
           or not localPlayer.Character
           or not localPlayer.Character:FindFirstChild("Knife") then return end
-
         local range = options.killAuraDistance_slider
             and options.killAuraDistance_slider.Value or 7
-
         for _, value48 in ipairs(players:GetPlayers()) do
           if value48 ~= localPlayer and value48.Character
             and value48.Character:FindFirstChild("HumanoidRootPart")
             and getRolePlayer("Murderer") ~= value48
             and getRolePlayer("Sheriff") ~= value48
             and getRolePlayer("Hero") ~= value48 then
-
             local myHrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
             if not myHrp then return end
             local targetHrp = value48.Character.HumanoidRootPart
-
             if (targetHrp.Position - myHrp.Position).Magnitude < range then
               local cframe5 = targetHrp.CFrame
               local anchored2 = targetHrp.Anchored
               targetHrp.Anchored = true
               targetHrp.CFrame = myHrp.CFrame * CFrame.new(0, 0, -2)
               task.wait(0.05)
-
               local knife3 = localPlayer.Character:FindFirstChild("Knife")
                 or localPlayer.Backpack:FindFirstChild("Knife")
               if knife3 and knife3:FindFirstChild("Events")
@@ -1595,10 +1530,9 @@ murdererActions:AddButton({
         Utils.Notify("You don't have the knife.", "Error", nil); return
       end
     end
-
     local v74 = {}
     for _, value50 in ipairs(players:GetPlayers()) do
-            if value50 ~= localPlayer and value50.Character
+      if value50 ~= localPlayer and value50.Character
         and value50.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = value50.Character.HumanoidRootPart
         v74[value50] = { CFrame = hrp.CFrame, Anchored = hrp.Anchored }
@@ -1607,7 +1541,6 @@ murdererActions:AddButton({
         task.wait(0.01)
       end
     end
-
     local knife4 = localPlayer.Character:FindFirstChild("Knife")
       or localPlayer.Backpack:FindFirstChild("Knife")
     if knife4 and knife4:FindFirstChild("Events")
@@ -1615,7 +1548,6 @@ murdererActions:AddButton({
       knife4.Events.KnifeStabbed:FireServer()
     end
     task.wait(0.1)
-
     for plr, snap in pairs(v74) do
       if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
         plr.Character.HumanoidRootPart.CFrame = snap.CFrame
@@ -1630,25 +1562,19 @@ aimingPrediction:AddParagraph({
   Title = "Combat Settings & Prediction",
   Content = "Tune how the script leads targets. Offset = studs ahead. Ping mult = scales with latency.",
 })
-
 aimingPrediction:AddToggle("simulateKnifeThrow", {
   Title = "Simulate Knife Throw for Kill Nearest", Default = false,
   Callback = function(value52) end,
 })
-
 aimingPrediction:AddSlider("shootOffset", {
   Title = "Aim Prediction Offset", Default = 2.8, Min = 0, Max = 10, Rounding = 1,
   Callback = function(value53) end,
 })
-
 aimingPrediction:AddSlider("offsetToPingMult", {
   Title = "Ping Multiplier for Prediction", Default = 1, Min = 0, Max = 5, Rounding = 1,
   Callback = function(value54) end,
 })
 
--- ============================================================
--- Visuals (ESP)
--- ============================================================
 local visuals = Tabs.Visuals
 local playerESP = visuals:AddSection("Player ESP")
 local objectESP = visuals:AddSection("Object ESP")
@@ -1658,7 +1584,6 @@ local function reloadPlayerESP()
   if not ESP then return end
   ESP:RemoveGroup("players")
   if not (options.playerESP and options.playerESP.Value) then return end
-
   for _, value55 in ipairs(players:GetPlayers()) do
     if value55.Character then
       local roleName = "Innocent"
@@ -1666,7 +1591,6 @@ local function reloadPlayerESP()
       local arrowShow = false
       local displayName = value55.DisplayName
       local arrowMinDistance = 0
-
       if value55 == getRolePlayer("Murderer") then
         roleName = "Murderer"; color = Color3.new(1, 0, 0.015)
         arrowShow = true; displayName = "Murderer"; arrowMinDistance = 99999
@@ -1674,14 +1598,10 @@ local function reloadPlayerESP()
         roleName = "Sheriff/Hero"; color = Color3.new(0, 0.6, 1)
         displayName = "Sheriff/Hero"; arrowShow = true
       end
-
-      -- FIX #1: nil-guard for showInnocentNamesESP
       local showInnocent = options.showInnocentNamesESP
         and options.showInnocentNamesESP.Value == true
-
       ESP:Add(value55.Character, {
-        AccentColor = color,
-        ArrowShow = arrowShow,
+        AccentColor = color, ArrowShow = arrowShow,
         ArrowMinDistance = arrowMinDistance,
         ArrowSize = UDim2.new(0, 35, 0, 35),
         LabelText = displayName,
@@ -1696,7 +1616,6 @@ if replicatedStorage:FindFirstChild("Remotes")
   and replicatedStorage.Remotes:FindFirstChild("Gameplay")
   and replicatedStorage.Remotes.Gameplay:FindFirstChild("PlayerDataChanged") then
   replicatedStorage.Remotes.Gameplay.PlayerDataChanged.OnClientEvent:Connect(function(p52)
-    -- FIX #6: merge instead of replace, in case payload is a diff.
     if type(p52) == "table" then
       for k, v in pairs(p52) do roleData[k] = v end
     else
@@ -1765,17 +1684,12 @@ objectESP:AddToggle("trapDetection", {
   end,
 })
 
--- ============================================================
--- Automation
--- ============================================================
 local automation = Tabs.Automation
 local coinCollection = automation:AddSection("Coin Collection")
-
 coinCollection:AddParagraph({
   Title = "Coin Collection",
   Content = "Automatically navigates to the nearest coin. Your character will move.",
 })
-
 coinCollection:AddSlider("coinFarmSpeed_slider", {
   Title = "Coin Farm Speed (studs/sec)", Default = 10, Min = 5, Max = 25, Rounding = 0,
   Callback = function(value62) end,
@@ -1793,7 +1707,6 @@ coinCollection:AddToggle("coinMagnet_loop_toggle", {
           task.wait(0.02)
           local character9 = localPlayer.Character
           if character9 ~= lastChar then cacheCharacterParts(character9); lastChar = character9 end
-
           local hrp = character9 and character9:FindFirstChild("HumanoidRootPart")
           if hrp then
             local map = getMap()
@@ -1804,7 +1717,6 @@ coinCollection:AddToggle("coinMagnet_loop_toggle", {
               elseif coinContainer == nil then
                 clearCoinContainer()
               end
-
               if #coinState.list > 0 then
                 local best, bestCF, bestDist = nil, nil, math.huge
                 for _, value64 in ipairs(coinState.list) do
@@ -1820,13 +1732,11 @@ coinCollection:AddToggle("coinMagnet_loop_toggle", {
                     if d < bestDist then bestDist = d; best = value64; bestCF = CFrame.new(position5) end
                   end
                 end
-
                 if best and best.Parent then
                   local targetCF = bestCF or best:GetPivot()
                   local v83 = math.clamp((hrp.Size and hrp.Size.Y or 0) * 0.5, 0.75, 2)
                   local v85 = targetCF * CFrame.new(0, math.max(v83 - 0.4, 0), 0)
                   local dist = (hrp.Position - v85.Position).Magnitude
-
                   if lastTarget ~= best or not tween
                     or tween.PlaybackState ~= Enum.PlaybackState.Playing then
                     if tween then tween:Cancel() end
@@ -1839,7 +1749,6 @@ coinCollection:AddToggle("coinMagnet_loop_toggle", {
                       { CFrame = v85 })
                     tween:Play()
                   end
-
                   if dist <= 1.5 then
                     skipCoin(best)
                     lastTarget = nil
@@ -1867,7 +1776,6 @@ gunPickup:AddParagraph({
   Title = "Gun Pickup",
   Content = "If the Sheriff drops the gun, this will attempt to pick it up automatically.",
 })
-
 gunPickup:AddToggle("autoGetGun_toggle_farm", {
   Title = "Auto-Get Dropped Gun", Default = false,
   Callback = function(value66)
@@ -1880,15 +1788,11 @@ gunPickup:AddToggle("autoGetGun_toggle_farm", {
     end
   end,
 })
-
 gunPickup:AddKeybind("manualGetGun_keybind", {
   Title = "Manually Get Dropped Gun", Mode = "Hold", Default = "G",
   Callback = function(value67) if value67 then Utils.pickupGun() end end,
 })
 
--- ============================================================
--- Teleport
--- ============================================================
 local teleport = Tabs.Teleport
 local gameTeleportation = teleport:AddSection("Game Teleportation")
 local safeZone = teleport:AddSection("Safe Zone")
@@ -1896,7 +1800,6 @@ local safeZone = teleport:AddSection("Safe Zone")
 gameTeleportation:AddButton({
   Title = "Teleport to Lobby",
   Callback = function()
-    -- FIX #3: pcall-guard on lobby model lookup
     local ok, err = pcall(function()
       local char = localPlayer.Character
       if not char or not char:FindFirstChild("HumanoidRootPart") then
@@ -1906,14 +1809,10 @@ gameTeleportation:AddButton({
       local cframe7 = nikilis.PrimaryPart and nikilis.PrimaryPart.CFrame or nikilis:GetPivot()
       char.HumanoidRootPart.CFrame = cframe7
     end)
-    if ok then
-      Utils.Notify("Teleported to Lobby.")
-    else
-      Utils.Notify("Teleport failed: " .. tostring(err), "Error", nil)
-    end
+    if ok then Utils.Notify("Teleported to Lobby.")
+    else Utils.Notify("Teleport failed: " .. tostring(err), "Error", nil) end
   end,
 })
-
 gameTeleportation:AddButton({
   Title = "Teleport to Map Spawn",
   Callback = function()
@@ -1936,7 +1835,6 @@ gameTeleportation:AddButton({
     end
   end,
 })
-
 safeZone:AddButton({
   Title = "Teleport to Safe Zone",
   Callback = function()
@@ -1952,12 +1850,8 @@ safeZone:AddButton({
     end
   end,
 })
-
 safeZone:AddButton({ Title = "Re-create Safe Zone", Callback = function() createSafeZone() end })
 
--- ============================================================
--- Misc
--- ============================================================
 local misc = Tabs.Misc
 local gameInformation = misc:AddSection("Game Information")
 local spectateSystem = misc:AddSection("Spectate System")
@@ -1975,7 +1869,6 @@ gameInformation:AddButton({
     end
   end,
 })
-
 gameInformation:AddButton({
   Title = "Copy Sheriff/Hero Username",
   Callback = function()
@@ -1988,7 +1881,6 @@ gameInformation:AddButton({
     end
   end,
 })
-
 gameInformation:AddButton({
   Title = "Send Roles to Chat",
   Callback = function()
@@ -1998,22 +1890,19 @@ gameInformation:AddButton({
         local hero = getRolePlayer("Sheriff") or getRolePlayer("Hero")
         value68:SendAsync(string.format(
           "Murderer: %s | Sheriff/Hero: %s | [ Soluna ]",
-          murderer3 and murderer3.Name or "-",
-          hero and hero.Name or "-"))
+          murderer3 and murderer3.Name or "-", hero and hero.Name or "-"))
         Utils.Notify("Roles sent to chat.")
         return
       end
     end
   end,
 })
-
 gameInformation:AddToggle("ignoreKnifeThrows_toggle", {
   Title = "Ignore Knife Throws (- Experimental)", Default = false,
   Callback = function(value69) end,
 })
 
 local spectateState = { player_list = {}, current_index = 0, is_active = false }
-
 local function updateSpectateCamera()
   if not spectateState.is_active or #spectateState.player_list == 0 then
     if localPlayer.Character and localPlayer.Character:FindFirstChildOfClass("Humanoid") then
@@ -2022,14 +1911,12 @@ local function updateSpectateCamera()
     end
     return
   end
-
   local target = spectateState.player_list[spectateState.current_index]
   if target and target.Character and target.Character:FindFirstChildOfClass("Humanoid") then
     workspace.CurrentCamera.CameraSubject = target.Character:FindFirstChildOfClass("Humanoid")
     Utils.Notify("Now spectating: " .. target.Name, "Spectate")
     return
   end
-
   table.remove(spectateState.player_list, spectateState.current_index)
   if #spectateState.player_list == 0 then
     spectateState.is_active = false
@@ -2064,7 +1951,6 @@ spectateSystem:AddButton({
     updateSpectateCamera()
   end,
 })
-
 spectateSystem:AddButton({
   Title = "Spectate Next Player",
   Callback = function()
@@ -2078,7 +1964,6 @@ spectateSystem:AddButton({
     updateSpectateCamera()
   end,
 })
-
 spectateSystem:AddButton({
   Title = "Spectate Previous Player",
   Callback = function()
@@ -2092,7 +1977,6 @@ spectateSystem:AddButton({
     updateSpectateCamera()
   end,
 })
-
 spectateSystem:AddButton({
   Title = "Stop Spectating",
   Callback = function()
@@ -2109,7 +1993,6 @@ spectateSystem:AddButton({
     end
   end,
 })
-
 client:AddButton({
   Title = "Get Ping",
   Callback = function()
@@ -2117,33 +2000,24 @@ client:AddButton({
   end,
 })
 
--- ============================================================
--- Trolling
--- ============================================================
 local trolling = Tabs.Trolling
 local generalPlayerFling = trolling:AddSection("General Player Fling")
-
 generalPlayerFling:AddParagraph({
   Title = "Player Fling",
   Content = "Attempts to fling the selected player. Results can vary.",
 })
 
 local trollState = { target = nil, names = {} }
-
 local function refreshTrollPlayers()
   table.clear(trollState.names)
   local hasPlayers = false
-
   for _, value70 in ipairs(players:GetPlayers()) do
-    -- FIX #5: exclude LocalPlayer from the list.
     if value70 ~= localPlayer then
       table.insert(trollState.names, value70.Name)
       hasPlayers = true
     end
   end
-
   if not hasPlayers then table.insert(trollState.names, "No players found") end
-
   if options.troll_target_player_dropdown then
     local current = options.troll_target_player_dropdown.Value
     local selected = trollState.names[1]
@@ -2154,13 +2028,11 @@ local function refreshTrollPlayers()
   end
   return trollState.names
 end
-
 refreshTrollPlayers()
 
 generalPlayerFling:AddDropdown("troll_target_player_dropdown", {
   Title = "Select Player to Troll",
-  Values = trollState.names,
-  Multi = false,
+  Values = trollState.names, Multi = false,
   Default = trollState.names[1] or "No players found",
   Callback = function(value72)
     trollState.target = players:FindFirstChild(value72)
@@ -2169,26 +2041,20 @@ generalPlayerFling:AddDropdown("troll_target_player_dropdown", {
     end
   end,
 })
-
 generalPlayerFling:AddButton({
   Title = "Refresh Troll Player List",
   Callback = function() refreshTrollPlayers(); Utils.Notify("Troll player list refreshed.") end,
 })
-
 generalPlayerFling:AddButton({
   Title = "Fling Selected Player",
   Callback = function()
-    -- FIX #5: re-resolve from the dropdown's live value, not a stale upvalue.
     local sel = options.troll_target_player_dropdown
       and options.troll_target_player_dropdown.Value
     local target = sel and players:FindFirstChild(sel) or trollState.target
-    if not target then
-      Utils.Notify("No target selected.", "Error", nil); return
-    end
+    if not target then Utils.Notify("No target selected.", "Error", nil); return end
     Utils.miniFling(target)
   end,
 })
-
 generalPlayerFling:AddButton({
   Title = "Fling Murderer (MM2)",
   Callback = function()
@@ -2197,7 +2063,6 @@ generalPlayerFling:AddButton({
     Utils.miniFling(m)
   end,
 })
-
 generalPlayerFling:AddButton({
   Title = "Fling Sheriff/Hero (MM2)",
   Callback = function()
@@ -2208,12 +2073,10 @@ generalPlayerFling:AddButton({
 })
 
 local highRiskFeatures = trolling:AddSection("High-Risk Features")
-
 highRiskFeatures:AddParagraph({
   Title = "God Mode (- Highly Risky)",
   Content = "EXPERIMENTAL: attempts invincibility. Very unstable. Character reset usually needed to undo.",
 })
-
 highRiskFeatures:AddButton({
   Title = "Activate God Mode",
   Callback = function()
@@ -2223,35 +2086,29 @@ highRiskFeatures:AddButton({
     local char = localPlayer.Character
     local hum = char and char:FindFirstChildWhichIsA("Humanoid")
     if not hum then Utils.Notify("Humanoid not found.", "Error", nil); return end
-
     local cframe8 = cam.CFrame
     local clone2 = hum:Clone()
     clone2.Parent = char
     localPlayer.Character = nil
-
     clone2:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
     clone2:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
     clone2:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
-
     hum:Destroy()
     localPlayer.Character = char
     task.wait()
     cam.CameraSubject = clone2
     cam.CFrame = cframe8
     clone2.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-
-    local animate = char:FindFirstChild("Animate")
+        local animate = char:FindFirstChild("Animate")
     if animate then animate.Disabled = true; task.wait(); animate.Disabled = false end
     clone2.Health = clone2.MaxHealth
     Utils.Notify("God Mode activated (experimental).")
   end,
 })
-
 highRiskFeatures:AddParagraph({
   Title = "Hold Everyone Hostage (- Murderer)",
   Content = "As Murderer, teleports all other players to you and anchors them.",
 })
-
 highRiskFeatures:AddButton({
   Title = "Hold Everyone Hostage",
   Callback = function()
@@ -2275,23 +2132,17 @@ highRiskFeatures:AddButton({
   end,
 })
 
--- ============================================================
--- Settings
--- ============================================================
 local settings2 = Tabs.Settings
 local uiScriptSettings = settings2:AddSection("UI & Script Settings")
 local aboutCredits = settings2:AddSection("About & Credits")
-
 uiScriptSettings:AddParagraph({
   Title = "Rayfield UI",
-  Content = "Press RightShift to show or hide the interface.",
+  Content = "Press RightShift to show or hide the interface (mobile: tap the Rayfield icon).",
 })
-
 uiScriptSettings:AddToggle("enableNotifications", {
   Title = "Enable Notifications", Default = true,
   Callback = function(value75) end,
 })
-
 aboutCredits:AddButton({
   Title = "Join our Discord",
   Callback = function()
@@ -2303,13 +2154,9 @@ aboutCredits:AddButton({
     end
   end,
 })
-
 aboutCredits:AddParagraph({ Title = "Soluna", Content = "Soluna Script Hub for Murder Mystery 2." })
 aboutCredits:AddParagraph({ Title = "discord.gg/e52GujVvbN", Content = "Script by Soluna Development Team." })
 
--- ============================================================
--- Player/character event wiring
--- ============================================================
 players.PlayerAdded:Connect(function(player2)
   if options.playerESP and options.playerESP.Value and ESP then
     task.wait(0.1); reloadPlayerESP()
@@ -2323,12 +2170,10 @@ players.PlayerAdded:Connect(function(player2)
     if ESP and character16 then ESP:Remove(character16) end
   end)
 end)
-
 players.PlayerRemoving:Connect(function(player3)
   if ESP and player3.Character then ESP:Remove(player3.Character) end
   if options.playerESP and options.playerESP.Value and ESP then reloadPlayerESP() end
 end)
-
 for _, value76 in ipairs(players:GetPlayers()) do
   value76.CharacterAdded:Connect(function()
     if options.playerESP and options.playerESP.Value and ESP then
@@ -2340,16 +2185,10 @@ for _, value76 in ipairs(players:GetPlayers()) do
   end)
 end
 
--- ============================================================
--- Workspace event wiring (with early-outs)
--- ============================================================
 workspace.DescendantAdded:Connect(function(descendant)
   if not ESP then return end
-
-  -- FIX #perf: early-out before touching options table.
   local n = descendant.Name
   if n ~= "Trap" and n ~= "GunDrop" and n ~= "ThrowingKnife" then return end
-
   if options.trapDetection and options.trapDetection.Value
     and n == "Trap" and descendant.Parent
     and descendant.Parent:IsDescendantOf(workspace) then
@@ -2360,7 +2199,6 @@ workspace.DescendantAdded:Connect(function(descendant)
     })
     Utils.Notify("Murderer placed a trap!", "Alert", 3)
   end
-
   if n == "GunDrop" and descendant:IsA("BasePart") then
     if options.gunDropESP and options.gunDropESP.Value then
       ESP:Add(descendant, {
@@ -2376,7 +2214,6 @@ workspace.DescendantAdded:Connect(function(descendant)
       task.spawn(function() Utils.pickupGun() end)
     end
   end
-
   if options.ignoreKnifeThrows_toggle and options.ignoreKnifeThrows_toggle.Value
     and n == "ThrowingKnife" then
     descendant:Destroy()
@@ -2409,9 +2246,6 @@ workspace.ChildAdded:Connect(function(child3)
   end
 end)
 
--- ============================================================
--- Bootstrap
--- ============================================================
 solunaWindow:SelectTab(1)
 task.spawn(createSafeZone)
 
@@ -2421,7 +2255,8 @@ Rayfield:Notify({
   Duration = 5,
 })
 
--- LoadConfiguration already ran at the top of Part 1, so these re-enable correctly.
+pcall(function() Rayfield:LoadConfiguration() end)
+
 if options.playerESP and options.playerESP.Value then
   task.wait(0.5)
   reloadPlayerESP()
