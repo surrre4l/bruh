@@ -1,0 +1,67 @@
+--[[
+  FLXRfuscator v1.0 · ykyk
+  protected build · do not redistribute
+]]--
+local _s=string
+local _t=table
+local _m=math
+local _l=loadstring or load
+local _A="ZqXk9vTn3sLpYwR8mBcDfGgHjK2uAeQi4oP0rS6tU7xV1yWzN5aCbEIJlMOhFd+/"
+local _K={0x49,0x7f,0xcb,0x75,0xf1,0xff,0x5b,0x9a,0x9b,0xa4,0x2d,0xb3,0xc6,0xc9,0x99,0x72,0x13,0x10,0x77,0x04,0x66,0x2e,0x2e,0xfb}
+local _P="pBkVTKOARz2h+IcRziPEmkF0X0F8cZhjv0uIcYHip/p+a4Jix2Vln0w8TCSgvfPfRE+fR1CReOWVSZJHxQtTnPM8TaFMjmOQs5zNqjRgwQOC+bT2UOidftK+9aB1mrTjLq8VL1nX8Q/E5Et2x2Q5gJd/vTfLktnLevIBqL6fjWC8aohZPVtZqf9UTrjv2rPFp0Qo81RLTz/LCBtASztV3cGr30YQQq+Xn4gvmsXFRe/chrn+P2niv04/GDFLmfI2sG+fvYa9sxndaE+D62WrmCFCLkGTcrnuvoOmL1kvLR/M0npBO7uhgblyLTKpnNOQs5zNTKOARz2h+bORzitomaAFBJNvTZppYBWxgATn82xJSvgn7+g7XPGbgCmQnozHQmQxDeJ83O//PqJpFLxEm61o9PogGoxjKf+C9FkD2+plr4Tkzz6UHPwUm0buvGaQ8mxMTdTKpzDlb9DAxRnTv07FTTAnm4Orp9LNXYxDw8tOaZJ1U8cUcgBln64kktTeefpUL7Hi8/gha9pm7OgMpHmFLT5LAfiHvoHIL7Xrq8OoEE0Bh7u/Hr5IHSSLAf+4voz5qUceAFHd05ai62+amC7wgE1neHTiANa+vd648uT7PnpGhiWNpCd8vSFMcoc38qJ0L7if2pu9N42ZhMcPTJfNTg1cktTA2BXMGK+mphV9CZJnVxCJftvP96fwkrWGpfctT7LQwhV9C5k1UQRVBX9omCqwAfuBif/amFxg8uV9CmJnVxCJfr5hcS1wqHTcjbt/GKcB8OnaN4J1VRtyTtK+GE1w9JTmjPXoGKcB8On9NH2m62aamblyqnZfBbXAK5a0v38HwzzzCZ8GxxuIZky8nXymT5z3iEuWBFDsAxnaN4J1V+tyTtK+GE1kemIrpvDOLYaYp+0aarxe72nlZkydvtZRZ9PHsoXMH2OfeLPWr4cgd8azgJK+9CF8cZOr3E+/nKcBQFH+/Nh1U+LUpaM0ZJj8m9tGLoQxqd64Yp+7rBW2UOidcf5IcS1ZqBVupqTzD7ImR8zJo9k1+hprcHG/qcmMmq8LKGaf9wTuwpVJabhcxWtTncM89SFMmn8ZsBXUvsJiqRx6+bhUhWnTnkloHPvvAfJcjrOgD7ImR8zJonpXO7uVDaYFB0FZmGCuv4CIBwJnQ/hbo9nA720Efr5rgE1D9JTfu9JtLUn222naN4J11VQrpgjNZINkmZOrR9Lfqwx4LuV+ar63622EpgYFLnKumb+83GTyTKOmLup9aNLqh+Hb9Ielgg3LmfTsjcXhg18geFH70o+DUOidcHM8pv13A5R38mIPTMuBR8pOE4H1y+kFnnAVqg9cgEaG2mWxvMI2eitbarhc1WnbpD7ETgqTcbXijGuqgwCineukdrzTy2Vlqt5PGJZkHGVu/S+lnsa8w/+hdrpBxxuofrKKig4sDf+H2cXdGACi88zINBibUhJLvIv6n6AkqtnpjGIsRj6HX/teCfPn+/chgCU2TI1vDbpuv40VcwTjRzi+t6Vg17VFZTGMvTvRABhD25L+9yhpuF8NNf0BFinDmCo/RTZIvtDTevJPH8WDw8tOaZJ1zW6rfr56gf4sDf+HTBRxkscwfiub5bCiM7u4fPlNLn5AQf+c8D6rqhLHYzu/0nLkhWzu86ylsIA4BbRXL5J7Hw0EfuQIov/gxOuzvCw/TIqTBbX38BOSv7DiYzahCG6DUhnNZge0ig4sDf+H2cX5GACiqRRolrDeUU/NZTqrwTN8mrVDvr/0GMQx3FpRabzi47RrDC9MH4l8cZOrYE+/nKcBQFHot6tgyuJVngUlHPmkm9V5mEp6GKLw8zzzNmJnVxaM3HqP96932GWcm5Rrv7XDQFH2oqXD0Oixqts+vTv3m9WYjckhHeRdv8JRdbhEV2D49n9aHPE1Ag/Gq5O69wnXQFgV0Z/GrhnqsJ5ITbZF958Kjngfww+y8Wt+bTpeSutlqHbNcPmZDbL3pngfww+S9zD/NGH5UOnlqn7/qcBuk6WG8qpSphPB8//0Mr0u7h/Nng9+sTb9mrQGptgfww+zRW0+aS6D++tTX5r2gPSTmb+csE+yqMXc87kJabhcxWtTYkYyGbb3HGx2s5aWgM+2ppp9SZgBUs/OT6eCYDS9qNi5v0JSRMXc8Vx6onLkhWz+m9sDZCqu9NCcmaXsgOLg3i+h6mJ64xkbmkE+9twRn4puQr/hgen8ehx7SoI2CsuuH9w/qTbcBbTG2fpV3pggwxPEar09hz6JBCFNg0GDn4puQGn+genc2xWV0ci1oRiu9Jqh9njsgbXiXoXtTU8YQOQhMbpixuWxHnGPTTrb2gCDQbVtGA8LehxUSZcM6jWJYn5P9I9fifQqpX+PkKcDQOQhSXi1oRij9geMZgvT9NO8RNxWiOOdeeh75fVf7OzEvCYyGJZfgbz5v0JSsKXw8zDzoqXD6jPDQnd/vTfLktTl2fpV8s+Yp/zE5bPexLCWgrN4HajpBZgN8DC/n7W3kxQM0mcM6jxJYH5PTg9fi9+i3ZxlGACikyhaam8eUhO5m0FNB0B8snTlKa+xqMcBphx6onp5CY8EnHq5TamM24hT2D2SqUgQwit+Pr8g1QnTm01aT6MwHfTmicQ+Bs8XQuRaVtpJO3VInt5PGCSTufTHs4JlgMQww8islI+ud/x4H0Y7BcoTnqVwjngfYe+VY/8lCb8gyuxMDCYogDv1AgVGTBOM9s+pQOQh+I+MCRcbf6eMZI4kkra2RJgtT7LQwhV9lmIRMUkJZge5TgAkZ9XQ8SQfBetewyusd9p7Vskcwn9SGcE8snT+KaaPkMDiKVVRl9DQdRiJvImlBPoTn4puQG8VmAngfAHQP6/c72p+Zn5STgZSmfLfRbCVcwTFw8ubEoOeUpzInbvHwc5HnBiH2fuMgenwuOaaVtpIO3zIZneEqGA8G9WV3ZQWTenXQOxB+IPerxCoq0YyGEygq4aenZQD3LT5Yi+xSgztx8XafkU2L9v3QrWk8DarTKOw2px6oThAxxuVmDEIqg1piT6MjfJ+mwJi22+WPZIqF/aNQ95GgGZkGSxU3ZgWGACi2xaB+IPe4LuJq0YyGb93gb8Gk5XSZe+lwRhC5fk5x2HdQ95GgGmnH9WG8G/IG2OdfKkJabhcxWtTwkYyGbb3HGx2s5aWgM+2ppp9SZgBxORaRgeDmIFYgHzT2EuPiOOMeetbEr8gyszlvt7SqXBuktW/3qpSTMc3AOxJoqakhF8TwkEZvtjkmvVuev+fY8zEeVQhEE0B1xkyntj2TI1vDbpuv00VcwTIwQtz5f8mU+iJvImlLkBRk9RJTa+rpMW69wCMrm+2hF8TwDEkntlkko8unkWPTY8Bwi/10qaiMWcVm0FNBaoTnqhcmaXYgOTmL88zCfpeMzcMsEeMT0K3m9WYjf/tGAk8ehxVPZITdWXDpGm+wgfvBf6ss4xS92gwRzDUE9CqUOiOXCYyGCG1AgtGnBxCZenXQFgV0Z/hP7zmqryHqtAp958Kjv/SgdT43hDG5fkgMWQJfrN4HajBm58T2EuqLVuBk//0bThAxxuVmDYyGbAsmrTsQSTyqMOcXeJK0q+kdWgMmXY4gaBfnqhcmaXYgOg23+h3CGigMzcMmaZ2L9w329TG8G/IGucBpzQElrpe1WiQngelv6S1AgtGnBxCZ26+w/8FarkgxpIMDCwGTH9pZnxQYmWDwsIg88DINf8nO3HFvTA2L9w3ir+spqT/GACiqwPBV4XQMVJIvHBF9Pm9gEx8sonqTKOARz2h+IgD++tmnTqrv6UvcNXGpZ00L1nHQiiHdtJAt8JCYJKQvSMc958KjvuqLVtBX88oNmIRM7CeTJlPggUkgmuLKG/6BFnDQOxJoqOvhF8TR0EZTnA8grQfsE/IG2chYzQ7Pr8g1QT7H0YoBaoTn4puAf/PiOOJee0O5bufyLu1nneDTT4sHqJuev+3T7ImL26ENS/AxMzQYk1rmPoTTozH2fV+H8W49hDKaE/HUhzLTISEsIbQcbpuev/hiOOJeAh+Jv6D++tTm01aTromctI23balssIDY8JROBtFtOn3wfBLZEMu9NCcmaXkgOg23+hjabnAy8xMDCwDTT4sHqJGpNIrTLRlTuL7SoIiMzWVm0FNBDqgqacrZGTi936pX88oNmIRMzPxQ95jgf3smvVuev+RTlcceeCbaS6e42uyTtsdR69XBEWgmaXkgOTQLi/EbZIRM7uuQqSFTTAnm4O5vS/IGuPBLRhOarhgOLiFqDy8Ba59mbDmZ4W3mKxGpY+6o4c2C38THvq/qgUkHna2pB2+qynXQF/iCfXexLCWgPYFGCs8sTcrKa+xqMcBphx6onphCYRbHCwI96fcgEaQ2ma/v3g2fiub5bCiM7ucfPlN9gfLHfz5mEp6GKLDYztNo9/T1VJInqSFTTAnm4OrqG/IGuPBLRhOarhgOLiFqDy8Ba59mIL7TBXBmKW+8yDO/o6R++WNg5S8RaUEBEcQ2fpV3pggwxPEar09hzPEf0lPBaoTn4puQrtPiOOCeAVbEbDnVOuJfPlN3rZ8m5CGs5xFHAnDQOWVPZIkOW6UmXfMiG1xZTa2Loc1qMOLwihjabnAy8xMDCwDTT4sHqJGpNIrTLRlTuLxS5ciMzXVH0YPmCs8snTJKCIrqMg2LAtaJr00VhnFn0YyGCB1AgpGnBxCZenXQFgV0Z/bPun2Zns6ZTA/Dq8KjngfRe+V8WpzMbpixuWxfPlNwT1LmGC3K56MT7aynwPCSoPTOW6VBajFGCKDTNi5v08S3KcnpFtaJrPD++6UmBS8RaU4mfX82fpVYs+LwVDeab8nO3hIqty5TrjsmrV5v08SsKXw8zDzoqXD6jWDQnd/vTfLktTI2fpV8s+Yp/zE5bPexLCWgrN4HajpBZgN8DC/n7W3kxQM0mcM6jcJYH5PTg9fi9+i3ZxlGACikyhaam8eUhO5m0FNmcE1Ag8GTBOM9s+pQOQh+ITMCRcbf6qrvtZDHmOHLqIWTiWDw8tOaZJ1PR6rfS7+qnZnm9IQK5TWZy642hLMagnoSxukT97uYgKDkZicmaXvgOLg3i+h6mJ64xkbmkE+9twRnNpuK9Jhgen8ehx7SZcM6jQJ3t50ntZ8mfkuev+QYKPc2uDENGxudWgMmaYFGCBLko/YQEuqLV/BTizlCbVqxuCJvrePv6UGHr+spqTUkwnXQOWB+IRerxCoq0YyGEygq4aQq4Q3qMkTXxpJaEcBhF8T8kE99tNcufTHs4JlGACiT8HJaE+ZOL/VnHMXY9KRn5zpKG/OmYnDQOW1SZcM6jQJstKUZEA8G9zuev/OB/W4vuDeab8nMzcMwJESTPU4mfX8KCPrZK6Qw7k9O48tUhnyLSsFn6Y3mbWG8G/IGucBpzQEF90p17njnt7JTgrkmvVGqBxyZiW4vuDp5G/gxpIMDCw8wmM1ZN8uLoRrq7DiRQ/zb9peCLHI9HsFGEmMko8uZqTlZKXBR8+Ear09h727g0vdREjImHD83COWRMXSuOQ6o4c2CstTH9qMkgvT9NOWkB26Bd+B8WICSZTDd8IEfPYFGCKcqacVvSTuTULgp/8ba4IRM7CeTJlPggUkgmuLKG/6B18DQOxJoqg2CstTHvv5vTFqH9TRs5W3T7ImL26h6mJNx2HIZXZ+9HjsmJaFXEiMBAnDQOaVPZIpdWXD3rN+wg1fcrWsTo259LTg3//JoqXDd18spDE99tNcko8uvr/0GhgSKxQM0ci06QiwvIyrwT1LmGC32fpVw7ODwRPUPrzqx2DpwG9lBDvDZ4hsi9VtGA8LuVRBdnLerxCoqrqMkgvT9NhLQJguLy+Mw8DzoqXD4Oi1nCEgTTUcZT6f8BQxTpRmw/OBdnLeSx0VvJErGCSTAgz5m5Rrv7XDQFHLoqXD0Oixqts+vTv3m9WYjckhHeRcYunmbTOnV28WsalaHPE1AH/GXoXMTMcwXiz/CG0ZMzcMsEeMTPU3cEtDQG8Vmd0EqYWEd9CqUOiyfPlNsEy1sZ8g2BRr97PAfiub5bCiM7upfPlNBNM1AguGqqX+q7cdpWhzabRXo2HN9H4xwT13m9Wj8GQyZs+Ap/8ba4g2CR6Mf0w88XBukrXf8G+f8zziQhxhCfWD6jLMqtyETmMTk4hu2G/VG2OJeAh+Jv6D++tTm01aTromctI23balssIDY8JROBtFtOn3wfm0GcE1k4hu2G/VGeT49hDK5fhjUuzIqJEbwT1LmGC32fpVw7ODwRPUPrzqx2DpwG9lBaoTn5upKG/OBFngfuxhoZJgxVVFQkYNGaBTk4huv0iS3Kcnphx6onLkhWzb8PGbsTfYnGIxsBR49xcaudHXCnCbrK8yLXlyGcE1k4hu2G/VGeT49hDK5fhjUuzIqJEbwT1LmGC32fpVw7ODwRPUPrzqx2DpwG9lmCvLkoVRKG/+mw0EQhxho90eU18FnnAMimlMj4XIs4xl9pRLp+hbaoCNxxkOTcSDTTU3cbI8jB6+TMLpYzHE0ZcMMW6Mfr5XGCSTAHCujS/OidniQhV9O48tUhnyfPlNLkBRk9WbYDaMvYPWj/2z6m+2MWQJfr5XicBTk4OrqGTi936pQOQh+5IuM3hgXSqPv0EGB9D8evJPGe/BQFHsoZReM727g0vtqb4SgrIdTvJPiMcB8hRBVtJ1O3DIqIqEwH9cgrTGQkatnsLfjetbar8g7uI5vTK+vnZ8mfkDjnHVGeniqwWol90Z1VzIXC1Mig93c4i5mN+Mns+pAFgV0Z/GrhnqsaGvTbqGToWoZC6QsVJYwLpBFb+jFzcrfkUNgc7TAGuGq5O69w4="
+local _M={}
+for _i=1,#_A do _M[_A:sub(_i,_i)]=_i-1 end
+local function _dec(_d)
+  local _o={}
+  local _i=1
+  while _i<=#_d do
+    local _a,_b,_c,_e=_M[_d:sub(_i,_i)],_M[_d:sub(_i+1,_i+1)],_M[_d:sub(_i+2,_i+2)],_M[_d:sub(_i+3,_i+3)]
+    if not _a or not _b then break end
+    local _n=_a*262144+_b*4096
+    if _c then _n=_n+_c*64 end
+    if _e then _n=_n+_e end
+    _o[#_o+1]=_s.char(_m.floor(_n/65536)%256)
+    if _c then _o[#_o+1]=_s.char(_m.floor(_n/256)%256) end
+    if _e then _o[#_o+1]=_s.char(_n%256) end
+    _i=_i+4
+  end
+  return _t.concat(_o)
+end
+local function _xor(_d)
+  local _o={}
+  for _i=1,#_d do
+    local _a=_d:byte(_i)
+    local _b=_K[((_i-1)%#_K)+1]
+    local _r,_bit=0,1
+    for _=1,8 do
+      local _x,_y=_a%2,_b%2
+      if _x~=_y then _r=_r+_bit end
+      _a,_b,_bit=_m.floor(_a/2),_m.floor(_b/2),_bit*2
+    end
+    _o[_i]=_s.char(_r)
+  end
+  return _t.concat(_o)
+end
+
+local _h=5381
+for _i=1,#_P do _h=(_h*33+_P:byte(_i))%4294967296 end
+if _h~=390534371 then error("FLXR: integrity check failed") end
+
+local _pc=1
+local _fn=nil
+local _src=nil
+while _pc~=0 do
+  if _pc==1 then
+    _src=_xor(_dec(_P))
+    _pc=2
+  elseif _pc==2 then
+    _fn=_l(_src,"=FLXR")
+    _pc=_fn and 3 or 0
+  elseif _pc==3 then
+    if setfenv then pcall(setfenv,_fn,_G) end
+    _fn()
+    _pc=0
+  else
+    _pc=0
+  end
+end
